@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <title>Admin Panel — JM&amp;RA</title>
+
+  <style>
+    .admin-wrapper {
+      min-height: 100vh;
+      padding: 2rem 1.5rem 4rem;
+      max-width: 1024px;
+      margin: 0 auto;
+    }
+    .admin-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2.5rem;
+      padding-top: 1rem;
+    }
+    .admin-logo {
+      font-size: var(--h2-font-size);
+      font-weight: var(--font-semi-bold);
+      color: var(--first-color);
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+    .admin-badge {
+      background: var(--first-color-lighten);
+      color: var(--first-color);
+      font-size: var(--smaller-font-size);
+      font-weight: var(--font-semi-bold);
+      padding: .2rem .6rem;
+      border-radius: .25rem;
+    }
+    .admin-back {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      color: var(--text-color);
+      font-size: var(--small-font-size);
+      font-weight: var(--font-medium);
+      transition: .3s;
+    }
+    .admin-back:hover { color: var(--first-color); }
+
+    /* STATS */
+    .admin-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background-color: var(--container-color);
+      border: 2px solid var(--border-color);
+      border-radius: .75rem;
+      padding: 1.25rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .stat-icon {
+      background-color: var(--first-color-lighten);
+      color: var(--first-color);
+      border-radius: .5rem;
+      padding: .6rem;
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+    .stat-value {
+      font-size: var(--h2-font-size);
+      font-weight: var(--font-semi-bold);
+      color: var(--title-color);
+      line-height: 1.2;
+    }
+    .stat-label { font-size: var(--smaller-font-size); color: var(--text-color); }
+
+    /* GRID */
+    .admin-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    .panel {
+      background-color: var(--container-color);
+      border: 2px solid var(--border-color);
+      border-radius: 1rem;
+      padding: 1.5rem;
+    }
+    .panel__title {
+      font-size: var(--h3-font-size);
+      color: var(--title-color);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .panel__title i { color: var(--first-color); font-size: 1.2rem; }
+
+    /* FORM */
+    .admin-form { display: flex; flex-direction: column; gap: .85rem; }
+    .form-group { display: flex; flex-direction: column; gap: .3rem; }
+    .form-label {
+      font-size: var(--smaller-font-size);
+      font-weight: var(--font-semi-bold);
+      color: var(--text-color);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .form-input {
+      background-color: var(--body-color);
+      border: 2px solid var(--border-color);
+      border-radius: .5rem;
+      padding: .65rem .85rem;
+      font-size: var(--small-font-size);
+      color: var(--title-color);
+      width: 100%;
+      transition: border-color .3s;
+    }
+    .form-input:focus { border-color: var(--first-color); outline: none; }
+    .form-input::placeholder { color: var(--text-color); }
+    .btn-submit {
+      margin-top: .25rem;
+      width: 100%;
+      padding: .75rem;
+      font-size: var(--small-font-size);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+    }
+
+    /* LIST */
+    .property-list {
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      max-height: 520px;
+      overflow-y: auto;
+      padding-right: .25rem;
+    }
+    .property-list::-webkit-scrollbar { width: .4rem; }
+    .property-list::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: .5rem; }
+    .prop-item {
+      background-color: var(--body-color);
+      border: 2px solid var(--border-color);
+      border-radius: .75rem;
+      padding: .85rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: border-color .3s, box-shadow .3s;
+    }
+    .prop-item:hover {
+      border-color: var(--first-color);
+      box-shadow: 0 4px 12px hsla(30, 70%, 50%, .1);
+    }
+    .prop-thumb {
+      width: 52px;
+      height: 52px;
+      border-radius: .5rem;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .prop-thumb-placeholder {
+      width: 52px;
+      height: 52px;
+      border-radius: .5rem;
+      background-color: var(--first-color-lighten);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--first-color);
+      font-size: 1.4rem;
+    }
+    .prop-info { flex: 1; min-width: 0; }
+    .prop-title {
+      font-size: var(--small-font-size);
+      font-weight: var(--font-semi-bold);
+      color: var(--title-color);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .prop-meta {
+      font-size: var(--smaller-font-size);
+      color: var(--text-color);
+      display: flex;
+      gap: .75rem;
+      margin-top: .2rem;
+    }
+    .prop-meta span { display: flex; align-items: center; gap: .2rem; }
+    .prop-price {
+      font-size: var(--small-font-size);
+      font-weight: var(--font-semi-bold);
+      color: var(--first-color);
+      white-space: nowrap;
+    }
+    .btn-delete {
+      background: none;
+      border: 2px solid var(--border-color);
+      border-radius: .4rem;
+      color: var(--text-color);
+      cursor: pointer;
+      padding: .4rem .5rem;
+      font-size: 1rem;
+      line-height: 1;
+      transition: .3s;
+      flex-shrink: 0;
+    }
+    .btn-delete:hover {
+      background-color: hsl(0, 70%, 95%);
+      border-color: hsl(0, 70%, 60%);
+      color: hsl(0, 70%, 50%);
+    }
+    .dark-theme .btn-delete:hover {
+      background-color: hsl(0, 40%, 15%);
+      border-color: hsl(0, 70%, 45%);
+      color: hsl(0, 70%, 60%);
+    }
+    .empty-state { text-align: center; padding: 2.5rem 1rem; color: var(--text-color); }
+    .empty-state i { font-size: 2.5rem; color: var(--border-color); display: block; margin-bottom: .75rem; }
+    .empty-state p { font-size: var(--small-font-size); }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 1.5rem;
+      background: var(--first-color);
+      color: #fff;
+      padding: .75rem 1.25rem;
+      border-radius: .5rem;
+      font-size: var(--small-font-size);
+      font-weight: var(--font-medium);
+      box-shadow: 0 8px 24px hsla(30, 70%, 40%, .3);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      transform: translateY(6rem);
+      opacity: 0;
+      transition: .4s cubic-bezier(.34,1.56,.64,1);
+      z-index: 999;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* THEME BTN */
+    .theme-btn {
+      background: none;
+      border: 2px solid var(--border-color);
+      border-radius: .5rem;
+      padding: .4rem .6rem;
+      cursor: pointer;
+      color: var(--title-color);
+      font-size: 1.1rem;
+      transition: .3s;
+      line-height: 1;
+    }
+    .theme-btn:hover { border-color: var(--first-color); color: var(--first-color); }
+
+    /* RESPONSIVE */
+    @media screen and (max-width: 768px) {
+      .admin-stats { grid-template-columns: 1fr 1fr; }
+      .admin-grid { grid-template-columns: 1fr; }
+    }
+    @media screen and (max-width: 480px) {
+      .admin-stats { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="admin-wrapper">
+
+  <div class="admin-header">
+    <a href="index.html" class="admin-back">
+      <i class='bx bx-arrow-back'></i> Back to site
+    </a>
+    <div style="display:flex; align-items:center; gap:.75rem;">
+      <span class="admin-logo">JM&amp;RA <i class='bx bxs-buildings'></i></span>
+      <span class="admin-badge">Admin</span>
+    </div>
+    <button class="theme-btn" id="theme-button" title="Toggle theme">
+      <i class='bx bx-moon'></i>
+    </button>
+  </div>
+
+  <div class="admin-stats">
+    <div class="stat-card">
+      <div class="stat-icon"><i class='bx bx-building-house'></i></div>
+      <div>
+        <div class="stat-value" id="stat-total">0</div>
+        <div class="stat-label">Total Properties</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class='bx bx-map-pin'></i></div>
+      <div>
+        <div class="stat-value" id="stat-cities">0</div>
+        <div class="stat-label">Cities Listed</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class='bx bx-home-smile'></i></div>
+      <div>
+        <div class="stat-value" id="stat-latest">—</div>
+        <div class="stat-label">Latest Added</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-grid">
+
+    <div class="panel">
+      <h3 class="panel__title"><i class='bx bx-plus-circle'></i> Add Property</h3>
+      <div class="admin-form">
+        <div class="form-group">
+          <label class="form-label">Property Title</label>
+          <input class="form-input" type="text" id="title" placeholder="e.g. Bungalow 3BHK">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Price</label>
+          <input class="form-input" type="text" id="price" placeholder="e.g. &#8377;1.8 Cr">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Location</label>
+          <input class="form-input" type="text" id="location" placeholder="e.g. Pune">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Image URL</label>
+          <input class="form-input" type="text" id="image" placeholder="https://... or assets/img/...">
+        </div>
+        <button class="button btn-submit" onclick="addProperty()">
+          <i class='bx bx-plus'></i> Add Property
+        </button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 class="panel__title"><i class='bx bx-list-ul'></i> All Properties</h3>
+      <div class="property-list" id="admin-list"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <i class='bx bx-check-circle'></i>
+  <span id="toast-msg">Done!</span>
+</div>
+
+<script>
+  function getProperties() {
+    return JSON.parse(localStorage.getItem("properties")) || [];
+  }
+
+  function saveProperties(data) {
+    localStorage.setItem("properties", JSON.stringify(data));
+  }
+
+  function updateStats() {
+    const props = getProperties();
+    document.getElementById("stat-total").textContent = props.length;
+    const cities = new Set(props.map(p => p.location)).size;
+    document.getElementById("stat-cities").textContent = cities;
+    const latest = props.length ? props[props.length - 1].title : "—";
+    document.getElementById("stat-latest").textContent = latest.length > 10 ? latest.slice(0, 10) + "…" : latest;
+  }
+
+  function showToast(msg, isError = false) {
+    const toast = document.getElementById("toast");
+    document.getElementById("toast-msg").textContent = msg;
+    toast.style.background = isError ? "hsl(0, 65%, 50%)" : "var(--first-color)";
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2800);
+  }
+
+  function addProperty() {
+    const title    = document.getElementById("title").value.trim();
+    const price    = document.getElementById("price").value.trim();
+    const location = document.getElementById("location").value.trim();
+    const image    = document.getElementById("image").value.trim();
+
+    if (!title || !price || !location) {
+      showToast("Please fill in title, price & location.", true);
+      return;
+    }
+
+    const properties = getProperties();
+    properties.push({ id: Date.now(), title, price, location, image });
+    saveProperties(properties);
+
+    document.getElementById("title").value    = "";
+    document.getElementById("price").value    = "";
+    document.getElementById("location").value = "";
+    document.getElementById("image").value    = "";
+
+    renderAdmin();
+    showToast('"' + title + '" added!');
+  }
+
+  function deleteProperty(id, name) {
+    if (!confirm('Remove "' + name + '"?')) return;
+    let properties = getProperties().filter(p => p.id !== id);
+    saveProperties(properties);
+    renderAdmin();
+    showToast('"' + name + '" removed.');
+  }
+
+  function renderAdmin() {
+    const properties = getProperties();
+    const listDiv = document.getElementById("admin-list");
+    listDiv.innerHTML = "";
+    updateStats();
+
+    if (properties.length === 0) {
+      listDiv.innerHTML = '<div class="empty-state"><i class="bx bx-building"></i><p>No properties yet.<br>Add your first one!</p></div>';
+      return;
+    }
+
+    [...properties].reverse().forEach(p => {
+      const safeName = p.title.replace(/'/g, "\\'");
+      const thumb = p.image
+        ? '<img class="prop-thumb" src="' + p.image + '" alt="' + p.title + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">' +
+          '<div class="prop-thumb-placeholder" style="display:none"><i class=\'bx bx-image\'></i></div>'
+        : '<div class="prop-thumb-placeholder"><i class="bx bx-image"></i></div>';
+
+      listDiv.innerHTML +=
+        '<div class="prop-item">' +
+          thumb +
+          '<div class="prop-info">' +
+            '<div class="prop-title">' + p.title + '</div>' +
+            '<div class="prop-meta"><span><i class="bx bx-map-pin"></i>' + p.location + '</span></div>' +
+          '</div>' +
+          '<div class="prop-price">' + p.price + '</div>' +
+          '<button class="btn-delete" onclick="deleteProperty(' + p.id + ', \'' + safeName + '\')">' +
+            '<i class="bx bx-trash"></i>' +
+          '</button>' +
+        '</div>';
+    });
+  }
+
+  document.querySelectorAll(".form-input").forEach(input => {
+    input.addEventListener("keydown", e => { if (e.key === "Enter") addProperty(); });
+  });
+
+  /* DARK / LIGHT THEME — synced with main site */
+  const themeButton = document.getElementById("theme-button");
+  const darkTheme   = "dark-theme";
+
+  const savedTheme = localStorage.getItem("selected-theme");
+  if (savedTheme === "dark") {
+    document.body.classList.add(darkTheme);
+    themeButton.querySelector("i").className = "bx bx-sun";
+  }
+
+  themeButton.addEventListener("click", () => {
+    document.body.classList.toggle(darkTheme);
+    const isDark = document.body.classList.contains(darkTheme);
+    themeButton.querySelector("i").className = isDark ? "bx bx-sun" : "bx bx-moon";
+    localStorage.setItem("selected-theme", isDark ? "dark" : "light");
+    localStorage.setItem("selected-icon",  isDark ? "bx bx-moon" : "bx bx-sun");
+  });
+
+  renderAdmin();
+</script>
+
+</body>
+</html>

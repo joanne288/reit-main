@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <title>Properties — JM&amp;RA</title>
+  <style>
+    .prop-page { padding: 6rem 0 4rem; }
+    .prop-page .container { max-width: 1024px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* HEADER NAV */
+    .header { position: fixed; top: 0; left: 0; width: 100%; background-color: var(--body-color); box-shadow: 0 1px 4px hsla(220,30%,20%,.1); z-index: 100; transition: .3s; }
+    nav { height: 3.5rem; display: flex; justify-content: space-between; align-items: center; max-width: 1024px; margin: 0 auto; padding: 0 1.5rem; }
+    .nav__logo { color: var(--first-color); display: inline-flex; align-items: center; gap: .25rem; font-weight: var(--font-semi-bold); font-size: var(--h3-font-size); }
+    .nav__links { display: flex; align-items: center; gap: 2rem; }
+    .nav__links a { color: var(--text-color); font-size: var(--small-font-size); font-weight: var(--font-medium); transition: .3s; }
+    .nav__links a:hover, .nav__links a.active { color: var(--first-color); }
+    .nav__right { display: flex; align-items: center; gap: 1rem; }
+    .nav__user { display: flex; align-items: center; gap: .5rem; color: var(--text-color); font-size: var(--small-font-size); }
+    .nav__user i { font-size: 1.2rem; color: var(--first-color); }
+    .theme-btn { background: none; border: 2px solid var(--border-color); border-radius: .4rem; padding: .3rem .5rem; cursor: pointer; color: var(--title-color); font-size: 1rem; transition: .3s; }
+    .theme-btn:hover { border-color: var(--first-color); color: var(--first-color); }
+
+    /* FILTER BAR */
+    .filter-bar {
+      background-color: var(--container-color);
+      border: 2px solid var(--border-color);
+      border-radius: 1rem;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .85rem;
+      margin-bottom: 2rem;
+      align-items: flex-end;
+    }
+    .filter-group { display: flex; flex-direction: column; gap: .3rem; flex: 1; min-width: 140px; }
+    .filter-label { font-size: var(--smaller-font-size); font-weight: var(--font-semi-bold); color: var(--text-color); text-transform: uppercase; letter-spacing: .04em; }
+    .filter-input, .filter-select {
+      background-color: var(--body-color);
+      border: 2px solid var(--border-color);
+      border-radius: .5rem;
+      padding: .55rem .75rem;
+      font-size: var(--small-font-size);
+      color: var(--title-color);
+      width: 100%;
+      transition: border-color .3s;
+      font-family: var(--body-font);
+    }
+    .filter-input:focus, .filter-select:focus { border-color: var(--first-color); outline: none; }
+    .filter-btn { background: linear-gradient(101deg, hsl(220,70%,50%), hsl(220,70%,42%)); color: #fff; border: none; border-radius: .5rem; padding: .6rem 1.25rem; font-size: var(--small-font-size); font-weight: var(--font-medium); cursor: pointer; transition: .3s; white-space: nowrap; align-self: flex-end; }
+    .filter-btn:hover { opacity: .9; }
+    .btn-clear { background: var(--body-color); color: var(--text-color); border: 2px solid var(--border-color); border-radius: .5rem; padding: .55rem 1rem; font-size: var(--small-font-size); cursor: pointer; align-self: flex-end; transition: .3s; font-family: var(--body-font); }
+    .btn-clear:hover { border-color: var(--first-color); color: var(--first-color); }
+
+    /* RESULTS INFO */
+    .results-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+    .results-count { font-size: var(--small-font-size); color: var(--text-color); }
+    .results-count span { font-weight: var(--font-semi-bold); color: var(--first-color); }
+
+    /* GRID */
+    .properties-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .prop-card {
+      background-color: var(--container-color);
+      border: 2px solid var(--border-color);
+      border-radius: 1rem;
+      overflow: hidden;
+      transition: transform .3s, box-shadow .3s, border-color .3s;
+      cursor: pointer;
+    }
+    .prop-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px hsla(220,60%,30%,.12);
+      border-color: var(--first-color);
+    }
+    .prop-card__img { width: 100%; height: 190px; object-fit: cover; display: block; background: var(--border-color); }
+    .prop-card__img-placeholder { width: 100%; height: 190px; background: var(--first-color-lighten); display: flex; align-items: center; justify-content: center; color: var(--first-color); font-size: 3rem; }
+    .prop-card__body { padding: 1rem 1.1rem 1.25rem; }
+    .prop-card__price { font-size: var(--h3-font-size); font-weight: var(--font-semi-bold); color: var(--first-color); margin-bottom: .3rem; }
+    .prop-card__title { font-size: var(--normal-font-size); font-weight: var(--font-semi-bold); color: var(--title-color); margin-bottom: .5rem; }
+    .prop-card__meta { display: flex; align-items: center; gap: .4rem; font-size: var(--smaller-font-size); color: var(--text-color); margin-bottom: 1rem; }
+    .prop-card__meta i { color: var(--first-color); }
+    .prop-card__btn { display: block; background: var(--first-color-lighten); color: var(--first-color); text-align: center; padding: .6rem; border-radius: .4rem; font-size: var(--small-font-size); font-weight: var(--font-semi-bold); transition: .3s; }
+    .prop-card__btn:hover { background: var(--first-color); color: #fff; }
+
+    /* EMPTY */
+    .empty { text-align: center; padding: 4rem 1rem; color: var(--text-color); grid-column: 1/-1; }
+    .empty i { font-size: 3rem; color: var(--border-color); display: block; margin-bottom: 1rem; }
+
+    /* WISHLIST HEART */
+    .prop-card__top { position: relative; }
+    .heart-btn { position: absolute; top: .75rem; right: .75rem; background: var(--container-color); border: none; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; color: var(--text-color); transition: .3s; box-shadow: 0 2px 8px hsla(0,0%,0%,.15); }
+    .heart-btn.active, .heart-btn:hover { color: hsl(0, 70%, 55%); }
+
+    @media (max-width: 600px) {
+      .filter-bar { flex-direction: column; }
+      .nav__links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="header">
+  <nav>
+    <a href="index.html" class="nav__logo">JM&amp;RA <i class='bx bxs-buildings'></i></a>
+    <div class="nav__links">
+      <a href="index.html">Home</a>
+      <a href="properties.html" class="active">Properties</a>
+      <a href="index.html#value">Value</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+    <div class="nav__right">
+      <div class="nav__user" id="nav-user" style="display:none">
+        <i class='bx bx-user-circle'></i>
+        <span id="nav-username"></span>
+      </div>
+      <a href="login.html" class="button" id="nav-login" style="padding:.5rem 1rem; font-size:var(--small-font-size);">Login</a>
+      <button class="theme-btn" id="theme-button"><i class='bx bx-moon'></i></button>
+    </div>
+  </nav>
+</header>
+
+<main class="prop-page">
+  <div class="container">
+    <span class="section__subtitle">Browse All</span>
+    <h2 class="section__title" style="margin-bottom:1.5rem;">Available <span>Properties</span></h2>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label class="filter-label">Search</label>
+        <input class="filter-input" type="text" id="search" placeholder="Title or location…">
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">City</label>
+        <select class="filter-select" id="city-filter">
+          <option value="">All Cities</option>
+          <option value="Bangalore">Bangalore</option>
+          <option value="Mumbai">Mumbai</option>
+          <option value="Pune">Pune</option>
+          <option value="Goa">Goa</option>
+          <option value="Gurgaon">Gurgaon</option>
+          <option value="Hyderabad">Hyderabad</option>
+          <option value="Delhi">Delhi</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Type</label>
+        <select class="filter-select" id="type-filter">
+          <option value="">All Types</option>
+          <option value="bungalow">Bungalow</option>
+          <option value="villa">Villa</option>
+          <option value="apartment">Apartment</option>
+          <option value="flat">Flat</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Max Price (Cr)</label>
+        <input class="filter-input" type="number" id="price-filter" placeholder="e.g. 2">
+      </div>
+      <button class="filter-btn" onclick="applyFilters()"><i class='bx bx-search'></i> Search</button>
+      <button class="btn-clear" onclick="clearFilters()">Clear</button>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results-info">
+      <p class="results-count">Showing <span id="count">0</span> properties</p>
+    </div>
+
+    <div class="properties-grid" id="properties-grid"></div>
+  </div>
+</main>
+
+<script>
+  // ── Load properties from localStorage (added via admin) + hardcoded defaults ──
+  const DEFAULT_PROPERTIES = [
+    { id: 1, title: 'Bungalow 1', price: '₹1.8 Cr', location: 'Pune',      image: 'assets/img/popular1.jpg', type: 'bungalow' },
+    { id: 2, title: 'Bungalow 2', price: '₹2.4 Cr', location: 'Mumbai',    image: 'assets/img/popular2.jpg', type: 'bungalow' },
+    { id: 3, title: 'Bungalow 3', price: '₹1.2 Cr', location: 'Goa',       image: 'assets/img/popular3.jpg', type: 'bungalow' },
+    { id: 4, title: 'Villa 1',    price: '₹1.69 Cr', location: 'Bangalore', image: 'assets/img/popular4.jpg', type: 'villa' },
+    { id: 5, title: 'Villa 2',    price: '₹1.9 Cr',  location: 'Delhi',     image: 'assets/img/popular5.jpg', type: 'villa' },
+    { id: 6, title: 'Whitefield Apartment', price: '₹95 L', location: 'Bangalore', image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600', type: 'apartment' },
+    { id: 7, title: 'Koregaon Park Bungalow', price: '₹2.8 Cr', location: 'Pune', image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600', type: 'bungalow' },
+    { id: 8, title: 'Bandra Sea View Flat', price: '₹1.8 Cr', location: 'Mumbai', image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600', type: 'flat' },
+    { id: 9, title: 'Calangute Beach Villa', price: '₹2.4 Cr', location: 'Goa', image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600', type: 'villa' },
+    { id: 10, title: 'DLF Cyber City Apartment', price: '₹1.1 Cr', location: 'Gurgaon', image: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600', type: 'apartment' },
+    { id: 11, title: 'Jubilee Hills Bungalow', price: '₹3 Cr', location: 'Hyderabad', image: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600', type: 'bungalow' },
+    { id: 12, title: 'Indiranagar Studio', price: '₹80 L', location: 'Bangalore', image: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=600', type: 'apartment' },
+    { id: 13, title: 'Panaji Heritage Villa', price: '₹2.9 Cr', location: 'Goa', image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600', type: 'villa' },
+    { id: 14, title: 'Powai Lake Apartment', price: '₹1.55 Cr', location: 'Mumbai', image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600', type: 'apartment' },
+    { id: 15, title: 'Aundh Modern Flat', price: '₹88 L', location: 'Pune', image: 'https://images.unsplash.com/photo-1554995207-c18c203602cb?w=600', type: 'flat' },
+    { id: 16, title: 'HITEC City Apartment', price: '₹1.2 Cr', location: 'Hyderabad', image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600', type: 'apartment' },
+    { id: 17, title: 'Golf Course Villa', price: '₹2.95 Cr', location: 'Gurgaon', image: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600', type: 'villa' },
+    { id: 18, title: 'Vagator Cliffside Bungalow', price: '₹1.9 Cr', location: 'Goa', image: 'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=600', type: 'bungalow' },
+    { id: 19, title: 'Hinjewadi Tech Flat', price: '₹82 L', location: 'Pune', image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600', type: 'flat' },
+    { id: 20, title: 'Andheri West Apartment', price: '₹1.35 Cr', location: 'Mumbai', image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600', type: 'apartment' },
+  ];
+
+  function getAllProperties() {
+    const stored = JSON.parse(localStorage.getItem('properties')) || [];
+    return [...DEFAULT_PROPERTIES, ...stored];
+  }
+
+  function getWishlist() { return JSON.parse(localStorage.getItem('wishlist')) || []; }
+  function saveWishlist(w) { localStorage.setItem('wishlist', JSON.stringify(w)); }
+
+  function toggleWishlist(id) {
+    let w = getWishlist();
+    if (w.includes(id)) { w = w.filter(x => x !== id); }
+    else { w.push(id); }
+    saveWishlist(w);
+    renderGrid(currentList);
+  }
+
+  // Populate city dropdown
+  function populateCities() {
+    const props = getAllProperties();
+    const cities = [...new Set(props.map(p => p.location))].sort();
+    const sel = document.getElementById('city-filter');
+    cities.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c; opt.textContent = c;
+      sel.appendChild(opt);
+    });
+  }
+
+  // Parse price string like "₹1.8 Cr" → 1.8
+  function parsePrice(str) {
+    const match = str.replace(/[₹,]/g, '').match(/[\d.]+/);
+    return match ? parseFloat(match[0]) : 999;
+  }
+
+  let currentList = [];
+
+  function applyFilters() {
+    const search = document.getElementById('search').value.toLowerCase();
+    const city   = document.getElementById('city-filter').value;
+    const type   = document.getElementById('type-filter').value;
+    const maxP   = parseFloat(document.getElementById('price-filter').value) || Infinity;
+
+    const all = getAllProperties();
+    currentList = all.filter(p => {
+      const matchSearch = p.title.toLowerCase().includes(search) || p.location.toLowerCase().includes(search);
+      const matchCity   = !city || p.location === city;
+      const matchType   = !type || (p.type && p.type.toLowerCase() === type) || p.title.toLowerCase().includes(type);
+      const matchPrice  = parsePrice(p.price) <= maxP;
+      return matchSearch && matchCity && matchType && matchPrice;
+    });
+    renderGrid(currentList);
+  }
+
+  function clearFilters() {
+    document.getElementById('search').value       = '';
+    document.getElementById('city-filter').value  = '';
+    document.getElementById('type-filter').value  = '';
+    document.getElementById('price-filter').value = '';
+    currentList = getAllProperties();
+    renderGrid(currentList);
+  }
+
+  function renderGrid(list) {
+    const grid = document.getElementById('properties-grid');
+    const wishlist = getWishlist();
+    document.getElementById('count').textContent = list.length;
+    grid.innerHTML = '';
+
+    if (list.length === 0) {
+      grid.innerHTML = '<div class="empty"><i class="bx bx-search-alt"></i><p>No properties match your filters.</p></div>';
+      return;
+    }
+
+    list.forEach(p => {
+      const wished = wishlist.includes(p.id);
+      const img = p.image
+        ? `<img class="prop-card__img" src="${p.image}" alt="${p.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+        + `<div class="prop-card__img-placeholder" style="display:none"><i class='bx bx-image'></i></div>`
+        : `<div class="prop-card__img-placeholder"><i class='bx bx-image'></i></div>`;
+
+      grid.innerHTML += `
+        <div class="prop-card" onclick="window.location='property.html?id=${p.id}'">
+          <div class="prop-card__top">
+            ${img}
+            <button class="heart-btn ${wished ? 'active' : ''}"
+              onclick="event.stopPropagation(); toggleWishlist(${p.id})"
+              title="Save to wishlist">
+              <i class='bx ${wished ? 'bxs-heart' : 'bx-heart'}'></i>
+            </button>
+          </div>
+          <div class="prop-card__body">
+            <div class="prop-card__price">${p.price}</div>
+            <div class="prop-card__title">${p.title}</div>
+            <div class="prop-card__meta"><i class='bx bx-map-pin'></i>${p.location}</div>
+            <a class="prop-card__btn" href="property.html?id=${p.id}">View Details</a>
+          </div>
+        </div>`;
+    });
+  }
+
+  // ── Auth nav ──
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (user) {
+    document.getElementById('nav-user').style.display = 'flex';
+    document.getElementById('nav-username').textContent = user.name || user.email;
+    const loginBtn = document.getElementById('nav-login');
+    loginBtn.textContent = 'Logout';
+    loginBtn.href = '#';
+    loginBtn.onclick = () => { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.reload(); };
+    if (user.role === 'admin') {
+      const adminLink = document.createElement('a');
+      adminLink.href = 'admin.html'; adminLink.textContent = 'Admin';
+      document.querySelector('.nav__links').appendChild(adminLink);
+    }
+  }
+
+  // ── Theme ──
+  const themeBtn = document.getElementById('theme-button');
+  if (localStorage.getItem('selected-theme') === 'dark') { document.body.classList.add('dark-theme'); themeBtn.querySelector('i').className = 'bx bx-sun'; }
+  themeBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark-theme');
+    const isDark = document.body.classList.contains('dark-theme');
+    themeBtn.querySelector('i').className = isDark ? 'bx bx-sun' : 'bx bx-moon';
+    localStorage.setItem('selected-theme', isDark ? 'dark' : 'light');
+  });
+
+  // ── Search on Enter ──
+  document.getElementById('search').addEventListener('keydown', e => { if (e.key === 'Enter') applyFilters(); });
+
+  // ── Init ──
+  populateCities();
+  currentList = getAllProperties();
+  renderGrid(currentList);
+</script>
+<script src="calculator.js"></script>
+</body>
+</html>

@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <title>Property Details — JM&amp;RA</title>
+  <style>
+    /* ── PAGE LAYOUT ── */
+    .prop-detail-page { padding: 6rem 0 4rem; }
+    .prop-detail-page .container { max-width: 1024px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* ── HEADER NAV ── */
+    .header { position: fixed; top: 0; left: 0; width: 100%; background-color: var(--body-color); box-shadow: 0 1px 4px hsla(220,30%,20%,.1); z-index: 100; transition: .3s; }
+    nav { height: 3.5rem; display: flex; justify-content: space-between; align-items: center; max-width: 1024px; margin: 0 auto; padding: 0 1.5rem; }
+    .nav__logo { color: var(--first-color); display: inline-flex; align-items: center; gap: .25rem; font-weight: var(--font-semi-bold); font-size: var(--h3-font-size); }
+    .nav__links { display: flex; align-items: center; gap: 2rem; }
+    .nav__links a { color: var(--text-color); font-size: var(--small-font-size); font-weight: var(--font-medium); transition: .3s; }
+    .nav__links a:hover { color: var(--first-color); }
+    .theme-btn { background: none; border: 2px solid var(--border-color); border-radius: .4rem; padding: .3rem .5rem; cursor: pointer; color: var(--title-color); font-size: 1rem; transition: .3s; }
+    .theme-btn:hover { border-color: var(--first-color); color: var(--first-color); }
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb { display: flex; align-items: center; gap: .5rem; font-size: var(--small-font-size); color: var(--text-color); margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--first-color); transition: .3s; }
+    .breadcrumb a:hover { opacity: .8; }
+    .breadcrumb i { font-size: .75rem; }
+
+    /* ── MAIN GRID ── */
+    .detail-grid { display: grid; grid-template-columns: 1fr 360px; gap: 2rem; align-items: start; }
+
+    /* ── GALLERY ── */
+    .gallery-main { position: relative; border-radius: 1rem; overflow: hidden; background: var(--border-color); margin-bottom: .75rem; }
+    .gallery-main img { width: 100%; height: 420px; object-fit: cover; display: block; }
+    .gallery-thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: .5rem; }
+    .gallery-thumb { border-radius: .5rem; overflow: hidden; cursor: pointer; border: 2px solid transparent; transition: .3s; aspect-ratio: 4/3; }
+    .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: .3s; }
+    .gallery-thumb:hover, .gallery-thumb.active { border-color: var(--first-color); }
+    .gallery-thumb img:hover { transform: scale(1.05); }
+
+    /* ── SWIPER GALLERY (mobile) ── */
+    .gallery-swiper { display: none; border-radius: 1rem; overflow: hidden; margin-bottom: 1.5rem; }
+    .gallery-swiper .swiper-slide img { width: 100%; height: 300px; object-fit: cover; }
+    .gallery-swiper .swiper-pagination-bullet-active { background: var(--first-color); }
+
+    /* ── PROPERTY INFO ── */
+    .prop-header { margin: 1.5rem 0 1rem; }
+    .prop-badge { display: inline-block; background: var(--first-color-lighten); color: var(--first-color); font-size: var(--smaller-font-size); font-weight: var(--font-semi-bold); padding: .25rem .75rem; border-radius: 2rem; margin-bottom: .75rem; text-transform: capitalize; }
+    .prop-title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; margin-bottom: .5rem; }
+    .prop-title { font-size: var(--h1-font-size); color: var(--title-color); font-weight: var(--font-semi-bold); }
+    .prop-price { font-size: var(--h1-font-size); font-weight: var(--font-semi-bold); color: var(--first-color); white-space: nowrap; }
+    .prop-location { display: flex; align-items: center; gap: .4rem; color: var(--text-color); font-size: var(--small-font-size); margin-bottom: 1.25rem; }
+    .prop-location i { color: var(--first-color); font-size: 1.1rem; }
+
+    /* ── SPECS ── */
+    .specs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin-bottom: 1.5rem; }
+    .spec-card { background: var(--container-color); border: 2px solid var(--border-color); border-radius: .75rem; padding: 1rem; text-align: center; }
+    .spec-icon { font-size: 1.5rem; color: var(--first-color); display: block; margin-bottom: .35rem; }
+    .spec-value { font-size: var(--h3-font-size); font-weight: var(--font-semi-bold); color: var(--title-color); display: block; }
+    .spec-label { font-size: var(--smaller-font-size); color: var(--text-color); display: block; margin-top: .15rem; }
+
+    /* ── DESCRIPTION ── */
+    .prop-description { background: var(--container-color); border: 2px solid var(--border-color); border-radius: .75rem; padding: 1.25rem; margin-bottom: 1.5rem; }
+    .prop-description h3 { font-size: var(--h3-font-size); color: var(--title-color); margin-bottom: .75rem; display: flex; align-items: center; gap: .5rem; }
+    .prop-description h3 i { color: var(--first-color); }
+    .prop-description p { font-size: var(--small-font-size); color: var(--text-color); line-height: 1.8; }
+
+    /* ── FEATURES LIST ── */
+    .features { background: var(--container-color); border: 2px solid var(--border-color); border-radius: .75rem; padding: 1.25rem; margin-bottom: 1.5rem; }
+    .features h3 { font-size: var(--h3-font-size); color: var(--title-color); margin-bottom: .75rem; display: flex; align-items: center; gap: .5rem; }
+    .features h3 i { color: var(--first-color); }
+    .features-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: .5rem; }
+    .feature-item { display: flex; align-items: center; gap: .5rem; font-size: var(--small-font-size); color: var(--text-color); }
+    .feature-item i { color: var(--first-color); font-size: 1rem; flex-shrink: 0; }
+
+    /* ── SIDEBAR CONTACT FORM ── */
+    .sidebar { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-card { background: var(--container-color); border: 2px solid var(--border-color); border-radius: 1rem; padding: 1.5rem; position: sticky; top: 5rem; }
+    .contact-card__title { font-size: var(--h3-font-size); color: var(--title-color); margin-bottom: .25rem; display: flex; align-items: center; gap: .5rem; }
+    .contact-card__title i { color: var(--first-color); }
+    .contact-card__subtitle { font-size: var(--smaller-font-size); color: var(--text-color); margin-bottom: 1.25rem; }
+    .form-group { display: flex; flex-direction: column; gap: .3rem; margin-bottom: .85rem; }
+    .form-label { font-size: var(--smaller-font-size); font-weight: var(--font-semi-bold); color: var(--text-color); text-transform: uppercase; letter-spacing: .04em; }
+    .form-input, .form-textarea, .form-date { background: var(--body-color); border: 2px solid var(--border-color); border-radius: .5rem; padding: .65rem .85rem; font-size: var(--small-font-size); color: var(--title-color); width: 100%; transition: border-color .3s; font-family: var(--body-font); }
+    .form-input:focus, .form-textarea:focus, .form-date:focus { border-color: var(--first-color); outline: none; }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--text-color); }
+    .form-textarea { resize: vertical; min-height: 90px; }
+    .btn-submit { width: 100%; padding: .8rem; font-size: var(--small-font-size); display: flex; align-items: center; justify-content: center; gap: .5rem; margin-top: .25rem; cursor: pointer; border: none; }
+    .form-success { background: hsl(140,60%,94%); color: hsl(140,55%,30%); border: 1px solid hsl(140,60%,80%); border-radius: .5rem; padding: .65rem .85rem; font-size: var(--small-font-size); display: none; margin-top: .75rem; text-align: center; }
+    .form-error { background: hsl(0,70%,95%); color: hsl(0,65%,45%); border: 1px solid hsl(0,70%,85%); border-radius: .5rem; padding: .65rem .85rem; font-size: var(--small-font-size); display: none; margin-top: .75rem; }
+    .dark-theme .form-success { background: hsl(140,40%,12%); color: hsl(140,60%,55%); border-color: hsl(140,40%,22%); }
+    .dark-theme .form-error { background: hsl(0,40%,15%); color: hsl(0,70%,65%); border-color: hsl(0,40%,25%); }
+
+    /* ── AGENT CARD ── */
+    .agent-card { background: var(--container-color); border: 2px solid var(--border-color); border-radius: 1rem; padding: 1.25rem; display: flex; align-items: center; gap: 1rem; }
+    .agent-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--first-color-lighten); display: flex; align-items: center; justify-content: center; color: var(--first-color); font-size: 1.5rem; flex-shrink: 0; }
+    .agent-name { font-size: var(--small-font-size); font-weight: var(--font-semi-bold); color: var(--title-color); }
+    .agent-role { font-size: var(--smaller-font-size); color: var(--text-color); }
+    .agent-phone { font-size: var(--smaller-font-size); color: var(--first-color); display: flex; align-items: center; gap: .3rem; margin-top: .25rem; }
+
+    /* ── NOT FOUND ── */
+    .not-found { text-align: center; padding: 5rem 1rem; }
+    .not-found i { font-size: 3rem; color: var(--border-color); display: block; margin-bottom: 1rem; }
+    .not-found h2 { color: var(--title-color); margin-bottom: .5rem; }
+    .not-found p { color: var(--text-color); font-size: var(--small-font-size); margin-bottom: 1.5rem; }
+
+    @media (max-width: 768px) {
+      .detail-grid { grid-template-columns: 1fr; }
+      .gallery-main { display: none; }
+      .gallery-thumbs { display: none; }
+      .gallery-swiper { display: block; }
+      .specs-grid { grid-template-columns: repeat(3, 1fr); }
+      .nav__links { display: none; }
+      .prop-price { font-size: var(--h2-font-size); }
+    }
+
+    @media (max-width: 480px) {
+      .specs-grid { grid-template-columns: repeat(3, 1fr); }
+      .features-list { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="header">
+  <nav>
+    <a href="index.html" class="nav__logo">JM&amp;RA <i class='bx bxs-buildings'></i></a>
+    <div class="nav__links">
+      <a href="index.html">Home</a>
+      <a href="properties.html">Properties</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:1rem;">
+      <a href="login.html" class="button" id="nav-login-btn" style="padding:.45rem .9rem;font-size:var(--small-font-size);">Login</a>
+      <button class="theme-btn" id="theme-button"><i class='bx bx-moon'></i></button>
+    </div>
+  </nav>
+</header>
+
+<!-- PAGE -->
+<main class="prop-detail-page">
+  <div class="container" id="page-content">
+
+    <!-- filled by JS -->
+
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+<script>
+  // ── DATA ──────────────────────────────────────────────────
+  const DEFAULT_PROPERTIES = [
+    { id: 1, title: 'Koregaon Park Bungalow', price: '₹1.8 Cr', location: 'Pune', type: 'bungalow',
+      description: 'Beautiful bungalow with modern amenities and spacious rooms.',
+      image: 'assets/img/popular1.jpg',
+      images: ['assets/img/popular1.jpg', 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800', 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800', 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800'],
+      bedrooms: 3, bathrooms: 2, area_sqft: 2200 },
+    { id: 2, title: 'Pedar road Cottage', price: '₹2.4 Cr', location: 'Mumbai', type: 'bungalow',
+      description: 'Luxury cottage in prime location with stunning city view.',
+      image: 'assets/img/popular2.jpg',
+      images: ['assets/img/popular2.jpg', 'https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800', 'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800', 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800'],
+      bedrooms: 4, bathrooms: 3, area_sqft: 2800 },
+    { id: 3, title: 'Colva Holiday Home', price: '₹1.2 Cr', location: 'Goa', type: 'bungalow',
+      description: 'Peaceful beach house perfect for vacation living.',
+      image: 'assets/img/popular3.jpg',
+      images: ['assets/img/popular3.jpg', 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800', 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800', 'https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=800'],
+      bedrooms: 3, bathrooms: 2, area_sqft: 1900 },
+    { id: 4, title: 'The Garden Nest', price: '₹1.69 Cr', location: 'Bangalore', type: 'villa',
+      description: 'Modern home in tech hub with great connectivity.',
+      image: 'assets/img/popular4.jpg',
+      images: ['assets/img/popular4.jpg', 'https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=800', 'https://images.unsplash.com/photo-1615874959474-d609969a20ed?w=800', 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800'],
+      bedrooms: 4, bathrooms: 3, area_sqft: 3100 },
+    { id: 5, title: 'Palm Grove Villa', price: '₹1.9 Cr', location: 'Delhi', type: 'villa',
+      description: 'Spacious property in capital with premium facilities and private pool.',
+      image: 'assets/img/popular5.jpg',
+      images: ['assets/img/popular5.jpg', 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800', 'https://images.unsplash.com/photo-1612965607446-25e1332775ae?w=800', 'https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=800'],
+      bedrooms: 5, bathrooms: 4, area_sqft: 3500 },
+    { id: 6, title: 'Whitefield Apartment', price: '₹95 L', location: 'Bangalore', type: 'apartment',
+      description: 'Contemporary 2BHK apartment in the heart of Whitefield IT corridor. Premium fittings, modular kitchen and excellent connectivity to major tech parks.',
+      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600',
+      images: ['https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800', 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800', 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800'],
+      bedrooms: 2, bathrooms: 2, area_sqft: 1050 },
+    { id: 7, title: 'Koregaon Park Bungalow', price: '₹2.8 Cr', location: 'Pune', type: 'bungalow',
+      description: 'Elegant bungalow in Pune most coveted Koregaon Park neighbourhood. Spacious rooms, private garden, covered parking and walking distance to restaurants.',
+      image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600',
+      images: ['https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800', 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800', 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800'],
+      bedrooms: 4, bathrooms: 3, area_sqft: 3200 },
+    { id: 8, title: 'Bandra Sea View Flat', price: '₹1.8 Cr', location: 'Mumbai', type: 'flat',
+      description: 'Stunning flat in Bandra West with partial sea view. Modern interiors, premium amenities and steps away from the best restaurants Mumbai has to offer.',
+      image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600',
+      images: ['https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800', 'https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800', 'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800'],
+      bedrooms: 3, bathrooms: 2, area_sqft: 1450 },
+    { id: 9, title: 'Calangute Beach Villa', price: '₹2.4 Cr', location: 'Goa', type: 'villa',
+      description: 'Stunning villa just 5 minutes from Calangute Beach. Features private pool, tropical garden and open-plan living. Ideal for personal use and rental income.',
+      image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600',
+      images: ['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800', 'https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=800', 'https://images.unsplash.com/photo-1615874959474-d609969a20ed?w=800'],
+      bedrooms: 3, bathrooms: 3, area_sqft: 2600 },
+    { id: 10, title: 'DLF Cyber City Apartment', price: '₹1.1 Cr', location: 'Gurgaon', type: 'apartment',
+      description: 'Premium 2BHK apartment in DLF Cyber City with city views. High-rise building with gym, pool, 24/7 security and easy metro access.',
+      image: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600',
+      images: ['https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800', 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800', 'https://images.unsplash.com/photo-1554995207-c18c203602cb?w=800'],
+      bedrooms: 2, bathrooms: 2, area_sqft: 1200 },
+    { id: 11, title: 'Jubilee Hills Bungalow', price: '₹3 Cr', location: 'Hyderabad', type: 'bungalow',
+      description: 'Premium bungalow in Jubilee Hills elite residential area. Features large garden, covered parking for 3 cars, modular kitchen and high-end finishes.',
+      image: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600',
+      images: ['https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800', 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800', 'https://images.unsplash.com/photo-1612965607446-25e1332775ae?w=800'],
+      bedrooms: 4, bathrooms: 3, area_sqft: 3800 },
+    { id: 12, title: 'Indiranagar Studio', price: '₹80 L', location: 'Bangalore', type: 'apartment',
+      description: 'Stylish studio apartment in vibrant Indiranagar. Fully furnished with smart home features. Walking distance to metro, cafes and restaurants.',
+      image: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=600',
+      images: ['https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800', 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800', 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800'],
+      bedrooms: 1, bathrooms: 1, area_sqft: 650 },
+    { id: 13, title: 'Panaji Heritage Villa', price: '₹2.9 Cr', location: 'Goa', type: 'villa',
+      description: 'Charming Portuguese heritage villa in Panaji old quarter. Restored with modern comforts while retaining original character. Private courtyard and rooftop terrace.',
+      image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600',
+      images: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800', 'https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=800', 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800'],
+      bedrooms: 4, bathrooms: 3, area_sqft: 3100 },
+    { id: 14, title: 'Powai Lake Apartment', price: '₹1.55 Cr', location: 'Mumbai', type: 'apartment',
+      description: 'Serene 3BHK apartment overlooking Powai Lake. Gated community with club house, tennis courts and 24/7 security. Close to Hiranandani business district.',
+      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600',
+      images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800', 'https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=800', 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800'],
+      bedrooms: 3, bathrooms: 2, area_sqft: 1750 },
+    { id: 15, title: 'Aundh Modern Flat', price: '₹88 L', location: 'Pune', type: 'flat',
+      description: 'Well designed 2BHK flat in upscale Aundh locality. Bright interiors, balcony with garden view and proximity to top schools, hospitals and malls.',
+      image: 'https://images.unsplash.com/photo-1554995207-c18c203602cb?w=600',
+      images: ['https://images.unsplash.com/photo-1554995207-c18c203602cb?w=800', 'https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800', 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800'],
+      bedrooms: 2, bathrooms: 2, area_sqft: 1100 },
+    { id: 16, title: 'HITEC City Apartment', price: '₹1.2 Cr', location: 'Hyderabad', type: 'apartment',
+      description: 'Spacious 3BHK apartment minutes from HITEC City tech hub. Premium complex with rooftop pool, gym and co-working space. Ideal for IT professionals.',
+      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600',
+      images: ['https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800', 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800', 'https://images.unsplash.com/photo-1615874959474-d609969a20ed?w=800'],
+      bedrooms: 3, bathrooms: 2, area_sqft: 1650 },
+    { id: 17, title: 'Golf Course Villa', price: '₹2.95 Cr', location: 'Gurgaon', type: 'villa',
+      description: 'Prestigious villa overlooking the Golf Course Road. Features double height ceilings, private terrace, smart home automation and world class amenities.',
+      image: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600',
+      images: ['https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800', 'https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=800', 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800'],
+      bedrooms: 4, bathrooms: 4, area_sqft: 4200 },
+    { id: 18, title: 'Vagator Cliffside Bungalow', price: '₹1.9 Cr', location: 'Goa', type: 'bungalow',
+      description: 'Dramatic cliffside bungalow above Vagator Beach with panoramic Arabian Sea views. Open plan living, large decks and tropical landscaping throughout.',
+      image: 'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=600',
+      images: ['https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=800', 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800', 'https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=800'],
+      bedrooms: 3, bathrooms: 2, area_sqft: 2200 },
+    { id: 19, title: 'Hinjewadi Tech Flat', price: '₹82 L', location: 'Pune', type: 'flat',
+      description: 'Affordable and modern 2BHK flat in Hinjewadi Phase 1. Perfect for IT professionals working in the nearby tech park. Ready to move in with all modern fittings.',
+      image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600',
+      images: ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800', 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800', 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800'],
+      bedrooms: 2, bathrooms: 2, area_sqft: 980 },
+    { id: 20, title: 'Andheri West Apartment', price: '₹1.35 Cr', location: 'Mumbai', type: 'apartment',
+      description: 'Well located 2BHK apartment in Andheri West near the metro. Excellent connectivity to western suburbs, airport and business districts.',
+      image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600',
+      images: ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800', 'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800', 'https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=800'],
+      bedrooms: 2, bathrooms: 2, area_sqft: 1150 }
+  ];
+
+  const stored = JSON.parse(localStorage.getItem('properties')) || [];
+  const ALL    = [...DEFAULT_PROPERTIES, ...stored];
+
+  // ── GET ID FROM URL ───────────────────────────────────────
+  const params   = new URLSearchParams(window.location.search);
+  const id       = parseInt(params.get('id'));
+  const property = ALL.find(p => p.id == id);
+
+  // ── FEATURES BY TYPE ─────────────────────────────────────
+  const FEATURES = {
+    bungalow: ['Private Garden','Covered Parking','24/7 Security','Power Backup','Modular Kitchen','CCTV Surveillance'],
+    villa:    ['Private Pool','Landscaped Garden','Smart Home','Covered Parking','24/7 Security','Club House'],
+    default:  ['Covered Parking','24/7 Security','Power Backup','Lift Access','Modular Kitchen','CCTV Surveillance']
+  };
+
+  // ── RENDER ────────────────────────────────────────────────
+  const container = document.getElementById('page-content');
+
+  if (!property) {
+    container.innerHTML = `
+      <div class="not-found">
+        <i class='bx bx-error-circle'></i>
+        <h2>Property Not Found</h2>
+        <p>This property may have been removed or the link is incorrect.</p>
+        <a href="properties.html" class="button">Browse Properties</a>
+      </div>`;
+  } else {
+    const imgs     = property.images || [property.image];
+    const features = FEATURES[property.type] || FEATURES.default;
+
+    container.innerHTML = `
+      <!-- BREADCRUMB -->
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <i class='bx bx-chevron-right'></i>
+        <a href="properties.html">Properties</a>
+        <i class='bx bx-chevron-right'></i>
+        <span>${property.title}</span>
+      </div>
+
+      <!-- MOBILE SWIPER -->
+      <div class="gallery-swiper swiper" id="gallerySwiper">
+        <div class="swiper-wrapper">
+          ${imgs.map(src => `<div class="swiper-slide"><img src="${src}" alt="${property.title}"></div>`).join('')}
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+
+      <!-- DESKTOP GRID -->
+      <div class="detail-grid">
+
+        <!-- LEFT COLUMN -->
+        <div>
+          <!-- MAIN IMAGE -->
+          <div class="gallery-main">
+            <img id="main-img" src="${imgs[0]}" alt="${property.title}">
+          </div>
+
+          <!-- THUMBNAILS -->
+          <div class="gallery-thumbs">
+            ${imgs.map((src, i) => `
+              <div class="gallery-thumb ${i === 0 ? 'active' : ''}" onclick="switchImg('${src}', this)">
+                <img src="${src}" alt="Photo ${i+1}">
+              </div>`).join('')}
+          </div>
+
+          <!-- TITLE & PRICE -->
+          <div class="prop-header">
+            <span class="prop-badge"><i class='bx bx-home'></i> ${property.type || 'Property'}</span>
+            <div class="prop-title-row">
+              <h1 class="prop-title">${property.title}</h1>
+              <div class="prop-price">${property.price}</div>
+            </div>
+            <div class="prop-location">
+              <i class='bx bx-map-pin'></i>
+              ${property.location}
+            </div>
+          </div>
+
+          <!-- SPECS -->
+          <div class="specs-grid">
+            <div class="spec-card">
+              <i class='bx bx-bed spec-icon'></i>
+              <span class="spec-value">${property.bedrooms || 3}</span>
+              <span class="spec-label">Bedrooms</span>
+            </div>
+            <div class="spec-card">
+              <i class='bx bx-bath spec-icon'></i>
+              <span class="spec-value">${property.bathrooms || 2}</span>
+              <span class="spec-label">Bathrooms</span>
+            </div>
+            <div class="spec-card">
+              <i class='bx bx-area spec-icon'></i>
+              <span class="spec-value">${property.area_sqft ? property.area_sqft.toLocaleString() : 'N/A'}</span>
+              <span class="spec-label">Sq. Ft.</span>
+            </div>
+          </div>
+
+          <!-- DESCRIPTION -->
+          <div class="prop-description">
+            <h3><i class='bx bx-info-circle'></i> About this property</h3>
+            <p>${property.description || 'No description available.'}</p>
+          </div>
+
+          <!-- FEATURES -->
+          <div class="features">
+            <h3><i class='bx bx-check-shield'></i> Features & Amenities</h3>
+            <div class="features-list">
+              ${features.map(f => `
+                <div class="feature-item">
+                  <i class='bx bx-check-circle'></i>
+                  ${f}
+                </div>`).join('')}
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDEBAR -->
+        <div class="sidebar">
+
+          <!-- AGENT -->
+          <div class="agent-card">
+            <div class="agent-avatar"><i class='bx bx-user'></i></div>
+            <div>
+              <div class="agent-name">Julius Mascarenhas</div>
+              <div class="agent-role">Senior Property Agent</div>
+              <div class="agent-phone"><i class='bx bx-phone'></i> +91 9822863982</div>
+            </div>
+          </div>
+
+          <!-- CONTACT FORM -->
+          <div class="contact-card">
+            <h3 class="contact-card__title"><i class='bx bx-calendar-check'></i> Book a Viewing</h3>
+            <p class="contact-card__subtitle">Fill in your details and we'll confirm your visit.</p>
+
+            <div class="form-group">
+              <label class="form-label">Your Name</label>
+              <input class="form-input" type="text" id="enq-name" placeholder="Full name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input class="form-input" type="email" id="enq-email" placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Preferred Date</label>
+              <input class="form-date" type="date" id="enq-date">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Message</label>
+              <textarea class="form-textarea" id="enq-message" placeholder="Any questions or specific requirements..."></textarea>
+            </div>
+
+            <button class="button btn-submit" onclick="submitEnquiry()">
+              <i class='bx bx-send'></i> Send Request
+            </button>
+            <div class="form-success" id="form-success">
+              <i class='bx bx-check-circle'></i> Request sent! We'll contact you shortly.
+            </div>
+            <div class="form-error" id="form-error"></div>
+          </div>
+
+        </div>
+      </div>`;
+
+    // Init mobile swiper
+    new Swiper('#gallerySwiper', {
+      loop: imgs.length > 1,
+      pagination: { el: '.swiper-pagination', clickable: true }
+    });
+  }
+
+  // ── SWITCH MAIN IMAGE ─────────────────────────────────────
+  function switchImg(src, el) {
+    document.getElementById('main-img').src = src;
+    document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // ── SUBMIT ENQUIRY ────────────────────────────────────────
+  async function submitEnquiry() {
+    const name    = document.getElementById('enq-name').value.trim();
+    const email   = document.getElementById('enq-email').value.trim();
+    const date    = document.getElementById('enq-date').value;
+    const message = document.getElementById('enq-message').value.trim();
+    const errEl   = document.getElementById('form-error');
+    const sucEl   = document.getElementById('form-success');
+    errEl.style.display = 'none';
+    sucEl.style.display = 'none';
+
+    if (!name || !email) {
+      errEl.textContent = 'Please enter your name and email.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    // Save to localStorage for profile page
+    const enquiries = JSON.parse(localStorage.getItem('enquiries')) || [];
+    enquiries.push({
+      property: property.title,
+      date: date || 'TBC',
+      message: message || 'Viewing request',
+      status: 'pending'
+    });
+    localStorage.setItem('enquiries', JSON.stringify(enquiries));
+
+    // Also try backend if running
+    try {
+      const token = localStorage.getItem('token');
+      await fetch('http://localhost:5000/api/enquiries', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+        },
+        body: JSON.stringify({ property_id: property.id, name, email, message, viewing_date: date || null })
+      });
+    } catch (e) {
+      // backend not running — localStorage fallback already saved above
+    }
+
+    // Clear form and show success
+    document.getElementById('enq-name').value    = '';
+    document.getElementById('enq-email').value   = '';
+    document.getElementById('enq-date').value    = '';
+    document.getElementById('enq-message').value = '';
+    sucEl.style.display = 'block';
+  }
+
+  // ── AUTH NAV ──────────────────────────────────────────────
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (user) {
+    const loginBtn = document.getElementById('nav-login-btn');
+    loginBtn.textContent = user.name ? user.name.split(' ')[0] : 'Profile';
+    loginBtn.href = 'profile.html';
+  }
+
+  // ── THEME ─────────────────────────────────────────────────
+  const themeBtn = document.getElementById('theme-button');
+  if (localStorage.getItem('selected-theme') === 'dark') {
+    document.body.classList.add('dark-theme');
+    themeBtn.querySelector('i').className = 'bx bx-sun';
+  }
+  themeBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark-theme');
+    const isDark = document.body.classList.contains('dark-theme');
+    themeBtn.querySelector('i').className = isDark ? 'bx bx-sun' : 'bx bx-moon';
+    localStorage.setItem('selected-theme', isDark ? 'dark' : 'light');
+  });
+</script>
+</body>
+</html>

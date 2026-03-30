@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <title>Login — JM&amp;RA</title>
+  <style>
+    .auth-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1.5rem; }
+    .auth-card { background-color: var(--container-color); border: 2px solid var(--border-color); border-radius: 1.25rem; padding: 2.5rem 2rem; width: 100%; max-width: 420px; box-shadow: 0 16px 40px hsla(220, 60%, 20%, .1); }
+    .auth-logo { text-align: center; margin-bottom: 1.75rem; }
+    .auth-logo a { font-size: var(--h2-font-size); font-weight: var(--font-semi-bold); color: var(--first-color); display: inline-flex; align-items: center; gap: .4rem; }
+    .auth-title { font-size: var(--h2-font-size); color: var(--title-color); text-align: center; margin-bottom: .4rem; }
+    .auth-subtitle { font-size: var(--small-font-size); color: var(--text-color); text-align: center; margin-bottom: 2rem; }
+    .form-group { display: flex; flex-direction: column; gap: .3rem; margin-bottom: 1rem; }
+    .form-label { font-size: var(--smaller-font-size); font-weight: var(--font-semi-bold); color: var(--text-color); text-transform: uppercase; letter-spacing: .04em; }
+    .input-wrap { position: relative; }
+    .input-wrap i { position: absolute; left: .85rem; top: 50%; transform: translateY(-50%); color: var(--text-color); font-size: 1.1rem; }
+    .form-input { background-color: var(--body-color); border: 2px solid var(--border-color); border-radius: .5rem; padding: .7rem .85rem .7rem 2.5rem; font-size: var(--small-font-size); color: var(--title-color); width: 100%; transition: border-color .3s; }
+    .form-input:focus { border-color: var(--first-color); outline: none; }
+    .form-input::placeholder { color: var(--text-color); }
+    .auth-btn { width: 100%; padding: .8rem; margin-top: .5rem; font-size: var(--normal-font-size); text-align: center; display: block; }
+    .auth-footer { text-align: center; margin-top: 1.25rem; font-size: var(--small-font-size); color: var(--text-color); }
+    .auth-footer a { color: var(--first-color); font-weight: var(--font-medium); }
+    .auth-error { background: hsl(0,70%,95%); color: hsl(0,65%,45%); border: 1px solid hsl(0,70%,85%); border-radius: .5rem; padding: .65rem .85rem; font-size: var(--small-font-size); margin-bottom: 1rem; display: none; }
+    .dark-theme .auth-error { background: hsl(0,40%,15%); color: hsl(0,70%,65%); border-color: hsl(0,40%,25%); }
+    .theme-toggle { position: fixed; top: 1.25rem; right: 1.25rem; background: var(--container-color); border: 2px solid var(--border-color); border-radius: .5rem; padding: .4rem .6rem; cursor: pointer; color: var(--title-color); font-size: 1.1rem; transition: .3s; }
+    .theme-toggle:hover { border-color: var(--first-color); color: var(--first-color); }
+    .divider { display: flex; align-items: center; gap: .75rem; margin: 1.25rem 0; }
+    .divider-line { flex: 1; height: 1px; background: var(--border-color); }
+    .divider-text { font-size: var(--smaller-font-size); color: var(--text-color); white-space: nowrap; }
+    .google-btn-wrap { display: flex; justify-content: center; }
+  </style>
+</head>
+<body>
+
+<button class="theme-toggle" id="theme-button"><i class='bx bx-moon'></i></button>
+
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <a href="index.html">JM&amp;RA <i class='bx bxs-buildings'></i></a>
+    </div>
+    <h2 class="auth-title">Welcome back</h2>
+    <p class="auth-subtitle">Sign in to your account</p>
+
+    <div class="auth-error" id="error-msg"></div>
+
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <div class="input-wrap">
+        <i class='bx bx-envelope'></i>
+        <input class="form-input" type="email" id="email" placeholder="you@example.com">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <div class="input-wrap">
+        <i class='bx bx-lock-alt'></i>
+        <input class="form-input" type="password" id="password" placeholder="••••••••">
+      </div>
+    </div>
+
+    <button class="button auth-btn" onclick="handleLogin()">Sign In</button>
+
+    <!-- Divider -->
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-text">or continue with</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- Google Button -->
+    <div class="google-btn-wrap">
+      <div id="g_id_onload"
+        data-client_id="536470340798-8obomi7mihtdpljtevqupqn6jm70vaeb.apps.googleusercontent.com"
+        data-callback="handleGoogleLogin"
+        data-auto_prompt="false">
+      </div>
+      <div class="g_id_signin"
+        data-type="standard"
+        data-shape="rectangular"
+        data-theme="outline"
+        data-text="sign_in_with"
+        data-size="large"
+        data-width="360"
+        data-logo_alignment="left">
+      </div>
+    </div>
+
+    <div class="auth-footer">
+      Don't have an account? <a href="register.html">Register</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  async function handleLogin() {
+    const email    = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const errEl    = document.getElementById('error-msg');
+    errEl.style.display = 'none';
+
+    if (!email || !password) {
+      errEl.textContent = 'Please fill in all fields.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    try {
+      const res  = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        errEl.textContent = data.message || 'Login failed.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      window.location.href = data.user.role === 'admin' ? 'admin.html' : 'index.html';
+
+    } catch (err) {
+      errEl.textContent = 'Cannot connect to server. Is the backend running?';
+      errEl.style.display = 'block';
+    }
+  }
+
+  // Google callback
+  async function handleGoogleLogin(response) {
+    const errEl = document.getElementById('error-msg');
+    errEl.style.display = 'none';
+    try {
+      const res  = await fetch('http://localhost:5000/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ credential: response.credential })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        errEl.textContent = data.message || 'Google login failed.';
+        errEl.style.display = 'block';
+        return;
+      }
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      window.location.href = data.user.role === 'admin' ? 'admin.html' : 'index.html';
+    } catch (err) {
+      errEl.textContent = 'Cannot connect to server. Is the backend running?';
+      errEl.style.display = 'block';
+    }
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+
+  // Theme
+  const themeBtn = document.getElementById('theme-button');
+  if (localStorage.getItem('selected-theme') === 'dark') {
+    document.body.classList.add('dark-theme');
+    themeBtn.querySelector('i').className = 'bx bx-sun';
+  }
+  themeBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark-theme');
+    const isDark = document.body.classList.contains('dark-theme');
+    themeBtn.querySelector('i').className = isDark ? 'bx bx-sun' : 'bx bx-moon';
+    localStorage.setItem('selected-theme', isDark ? 'dark' : 'light');
+  });
+</script>
+</body>
+</html>
