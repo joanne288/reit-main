@@ -467,7 +467,7 @@
     // Also try backend if running
     try {
       const token = localStorage.getItem('token');
-      await fetch('http://localhost:5000/api/enquiries', {
+      await fetch('https://reit-main.onrender.com/api/enquiries', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
