@@ -140,7 +140,7 @@
     const errEl = document.getElementById('error-msg');
     errEl.style.display = 'none';
     try {
-      const res  = await fetch('https://reit-main.onrender.com/api/auth/google', { {
+      const res  = await fetch('https://reit-main.onrender.com/api/auth/google', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ credential: response.credential })
