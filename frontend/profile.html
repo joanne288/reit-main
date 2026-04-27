@@ -155,23 +155,26 @@
 
   // Default properties
   const DEFAULT_PROPERTIES = [
-    { id: 1, title: 'Bungalow 1', price: '₹1.8 Cr', location: 'Pune',      image: 'assets/img/popular1.jpg' },
-    { id: 2, title: 'Bungalow 2', price: '₹2.4 Cr', location: 'Mumbai',    image: 'assets/img/popular2.jpg' },
-    { id: 3, title: 'Bungalow 3', price: '₹1.2 Cr', location: 'Goa',       image: 'assets/img/popular3.jpg' },
-    { id: 4, title: 'Villa 1',    price: '₹1.69 Cr', location: 'Bangalore', image: 'assets/img/popular4.jpg' },
-    { id: 5, title: 'Villa 2',    price: '₹1.9 Cr',  location: 'Delhi',     image: 'assets/img/popular5.jpg' }
+    { id: 1, title: 'Koregaon Park Bungalow', price: '₹1.8 Cr', location: 'Pune',      image: 'assets/img/popular1.jpg' },
+    { id: 2, title: 'Pedar Road Cottage', price: '₹2.4 Cr', location: 'Mumbai',    image: 'assets/img/popular2.jpg' },
+    { id: 3, title: 'Colva Holiday Home', price: '₹1.2 Cr', location: 'Goa',       image: 'assets/img/popular3.jpg' },
+    { id: 4, title: 'Garden Nest',    price: '₹1.69 Cr', location: 'Bangalore', image: 'assets/img/popular4.jpg' },
+    { id: 5, title: 'Palmolive Villa',    price: '₹1.9 Cr',  location: 'Delhi',     image: 'assets/img/popular5.jpg' }
   ];
   const stored = JSON.parse(localStorage.getItem('properties')) || [];
   const ALL    = [...DEFAULT_PROPERTIES, ...stored];
 
-  function getWishlist()   { return JSON.parse(localStorage.getItem('wishlist'))   || []; }
-  function getEnquiries()  { return JSON.parse(localStorage.getItem('enquiries'))  || []; }
+ const wishlistKey  = 'wishlist_'  + (user?.email || 'guest');
+ const enquiriesKey = 'enquiries_' + (user?.email || 'guest');
 
-  function removeWishlist(id) {
-    const w = getWishlist().filter(x => x !== id);
-    localStorage.setItem('wishlist', JSON.stringify(w));
-    renderWishlist();
-  }
+ function getWishlist()   { return JSON.parse(localStorage.getItem(wishlistKey))   || []; }
+ function getEnquiries()  { return JSON.parse(localStorage.getItem(enquiriesKey))  || []; }
+
+ function removeWishlist(id) {
+  const w = getWishlist().filter(x => x !== id);
+  localStorage.setItem(wishlistKey, JSON.stringify(w));
+  renderWishlist();
+}
 
   function renderWishlist() {
     const ids   = getWishlist();

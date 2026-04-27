@@ -452,14 +452,17 @@
     }
 
     // Save to localStorage for profile page
-    const enquiries = JSON.parse(localStorage.getItem('enquiries')) || [];
+    const _user = JSON.parse(localStorage.getItem('user'));
+    const enquiriesKey = 'enquiries_' + (_user?.email || 'guest');
+
+    const enquiries = JSON.parse(localStorage.getItem(enquiriesKey)) || [];
     enquiries.push({
-      property: property.title,
-      date: date || 'TBC',
-      message: message || 'Viewing request',
-      status: 'pending'
-    });
-    localStorage.setItem('enquiries', JSON.stringify(enquiries));
+   property: property.title,
+   date: date || 'TBC',
+   message: message || 'Viewing request',
+   status: 'pending'
+   });
+   localStorage.setItem(enquiriesKey, JSON.stringify(enquiries));
 
     // Also try backend if running
     try {

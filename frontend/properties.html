@@ -179,13 +179,13 @@
 </main>
 
 <script>
-  // ── Load properties from localStorage (added via admin) + hardcoded defaults ──
+  // ── Load properties from localStorage ──
   const DEFAULT_PROPERTIES = [
-    { id: 1, title: 'Bungalow 1', price: '₹1.8 Cr', location: 'Pune',      image: 'assets/img/popular1.jpg', type: 'bungalow' },
-    { id: 2, title: 'Bungalow 2', price: '₹2.4 Cr', location: 'Mumbai',    image: 'assets/img/popular2.jpg', type: 'bungalow' },
-    { id: 3, title: 'Bungalow 3', price: '₹1.2 Cr', location: 'Goa',       image: 'assets/img/popular3.jpg', type: 'bungalow' },
-    { id: 4, title: 'Villa 1',    price: '₹1.69 Cr', location: 'Bangalore', image: 'assets/img/popular4.jpg', type: 'villa' },
-    { id: 5, title: 'Villa 2',    price: '₹1.9 Cr',  location: 'Delhi',     image: 'assets/img/popular5.jpg', type: 'villa' },
+    { id: 1, title: 'Koregaon Park Bungalow', price: '₹1.8 Cr', location: 'Pune',      image: 'assets/img/popular1.jpg', type: 'bungalow' },
+    { id: 2, title: 'Pedar Road Cottage', price: '₹2.4 Cr', location: 'Mumbai',    image: 'assets/img/popular2.jpg', type: 'bungalow' },
+    { id: 3, title: 'Colva Holiday Home', price: '₹1.2 Cr', location: 'Goa',       image: 'assets/img/popular3.jpg', type: 'bungalow' },
+    { id: 4, title: 'Garden Nest',    price: '₹1.69 Cr', location: 'Bangalore', image: 'assets/img/popular4.jpg', type: 'villa' },
+    { id: 5, title: 'Palmgrove Villa',    price: '₹1.9 Cr',  location: 'Delhi',     image: 'assets/img/popular5.jpg', type: 'villa' },
     { id: 6, title: 'Whitefield Apartment', price: '₹95 L', location: 'Bangalore', image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600', type: 'apartment' },
     { id: 7, title: 'Koregaon Park Bungalow', price: '₹2.8 Cr', location: 'Pune', image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600', type: 'bungalow' },
     { id: 8, title: 'Bandra Sea View Flat', price: '₹1.8 Cr', location: 'Mumbai', image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600', type: 'flat' },
@@ -208,8 +208,11 @@
     return [...DEFAULT_PROPERTIES, ...stored];
   }
 
-  function getWishlist() { return JSON.parse(localStorage.getItem('wishlist')) || []; }
-  function saveWishlist(w) { localStorage.setItem('wishlist', JSON.stringify(w)); }
+ const _user = JSON.parse(localStorage.getItem('user'));
+ const wishlistKey = 'wishlist_' + (_user?.email || 'guest');
+
+ function getWishlist() { return JSON.parse(localStorage.getItem(wishlistKey)) || []; }
+ function saveWishlist(w) { localStorage.setItem(wishlistKey, JSON.stringify(w)); }
 
   function toggleWishlist(id) {
     let w = getWishlist();
@@ -231,7 +234,7 @@
     });
   }
 
-  // Parse price string like "₹1.8 Cr" → 1.8
+  // Parse price string like "₹1.5 Cr" or "₹80 L" to a number in crores
   function parsePrice(str) {
     const match = str.replace(/[₹,]/g, '').match(/[\d.]+/);
     return match ? parseFloat(match[0]) : 999;

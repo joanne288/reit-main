@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -53,7 +54,7 @@
     /* STATS */
     .admin-stats {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 1rem;
       margin-bottom: 2rem;
     }
@@ -197,6 +198,7 @@
       display: flex;
       gap: .75rem;
       margin-top: .2rem;
+      flex-wrap: wrap;
     }
     .prop-meta span { display: flex; align-items: center; gap: .2rem; }
     .prop-price {
@@ -230,6 +232,69 @@
     .empty-state { text-align: center; padding: 2.5rem 1rem; color: var(--text-color); }
     .empty-state i { font-size: 2.5rem; color: var(--border-color); display: block; margin-bottom: .75rem; }
     .empty-state p { font-size: var(--small-font-size); }
+
+    /* ENQUIRY BADGES */
+    .badge {
+      padding: .2rem .65rem;
+      border-radius: .25rem;
+      font-size: var(--smaller-font-size);
+      font-weight: var(--font-semi-bold);
+      white-space: nowrap;
+    }
+    .badge-pending   { background: hsl(40,80%,92%);  color: hsl(40,70%,35%); }
+    .badge-confirmed { background: hsl(140,60%,92%); color: hsl(140,55%,30%); }
+    .dark-theme .badge-pending   { background: hsl(40,50%,18%);  color: hsl(40,70%,60%); }
+    .dark-theme .badge-confirmed { background: hsl(140,40%,15%); color: hsl(140,55%,55%); }
+
+    /* ENQUIRIES LIST */
+    .enquiries-list {
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: .25rem;
+    }
+    .enquiries-list::-webkit-scrollbar { width: .4rem; }
+    .enquiries-list::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: .5rem; }
+    .enquiry-item {
+      background-color: var(--body-color);
+      border: 2px solid var(--border-color);
+      border-radius: .75rem;
+      padding: .85rem 1rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
+      transition: border-color .3s;
+    }
+    .enquiry-item:hover { border-color: var(--first-color); }
+    .enquiry-actions { display: flex; align-items: center; gap: .5rem; flex-shrink: 0; margin-left: auto; }
+    .btn-confirm {
+      padding: .3rem .75rem;
+      font-size: var(--smaller-font-size);
+      border: none;
+      border-radius: .35rem;
+      background: var(--first-color);
+      color: #fff;
+      cursor: pointer;
+      font-family: var(--body-font);
+      font-weight: var(--font-medium);
+      transition: .3s;
+    }
+    .btn-confirm:hover { opacity: .85; }
+    .btn-undo {
+      padding: .3rem .75rem;
+      font-size: var(--smaller-font-size);
+      border: 2px solid var(--border-color);
+      border-radius: .35rem;
+      background: none;
+      color: var(--text-color);
+      cursor: pointer;
+      font-family: var(--body-font);
+      transition: .3s;
+    }
+    .btn-undo:hover { border-color: var(--first-color); color: var(--first-color); }
 
     /* TOAST */
     .toast {
@@ -268,8 +333,10 @@
     .theme-btn:hover { border-color: var(--first-color); color: var(--first-color); }
 
     /* RESPONSIVE */
+    @media screen and (max-width: 900px) {
+      .admin-stats { grid-template-columns: repeat(2, 1fr); }
+    }
     @media screen and (max-width: 768px) {
-      .admin-stats { grid-template-columns: 1fr 1fr; }
       .admin-grid { grid-template-columns: 1fr; }
     }
     @media screen and (max-width: 480px) {
@@ -282,6 +349,7 @@
 
 <div class="admin-wrapper">
 
+  <!-- HEADER -->
   <div class="admin-header">
     <a href="index.html" class="admin-back">
       <i class='bx bx-arrow-back'></i> Back to site
@@ -295,6 +363,7 @@
     </button>
   </div>
 
+  <!-- STATS -->
   <div class="admin-stats">
     <div class="stat-card">
       <div class="stat-icon"><i class='bx bx-building-house'></i></div>
@@ -317,10 +386,17 @@
         <div class="stat-label">Latest Added</div>
       </div>
     </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class='bx bx-calendar-check'></i></div>
+      <div>
+        <div class="stat-value" id="stat-enquiries">0</div>
+        <div class="stat-label">Viewing Requests</div>
+      </div>
+    </div>
   </div>
 
+  <!-- PROPERTIES GRID -->
   <div class="admin-grid">
-
     <div class="panel">
       <h3 class="panel__title"><i class='bx bx-plus-circle'></i> Add Property</h3>
       <div class="admin-form">
@@ -330,7 +406,7 @@
         </div>
         <div class="form-group">
           <label class="form-label">Price</label>
-          <input class="form-input" type="text" id="price" placeholder="e.g. &#8377;1.8 Cr">
+          <input class="form-input" type="text" id="price" placeholder="e.g. ₹1.8 Cr">
         </div>
         <div class="form-group">
           <label class="form-label">Location</label>
@@ -350,39 +426,32 @@
       <h3 class="panel__title"><i class='bx bx-list-ul'></i> All Properties</h3>
       <div class="property-list" id="admin-list"></div>
     </div>
-
   </div>
+
+  <!-- VIEWING REQUESTS -->
+  <div class="panel" style="margin-top:1.5rem;">
+    <h3 class="panel__title"><i class='bx bx-calendar-check'></i> Viewing Requests</h3>
+    <div class="enquiries-list" id="enquiries-admin-list"></div>
+  </div>
+
 </div>
 
+<!-- TOAST -->
 <div class="toast" id="toast">
   <i class='bx bx-check-circle'></i>
   <span id="toast-msg">Done!</span>
 </div>
 
 <script>
+
+  // ── PROPERTIES ────────────────────────────────────────────
+
   function getProperties() {
     return JSON.parse(localStorage.getItem("properties")) || [];
   }
 
   function saveProperties(data) {
     localStorage.setItem("properties", JSON.stringify(data));
-  }
-
-  function updateStats() {
-    const props = getProperties();
-    document.getElementById("stat-total").textContent = props.length;
-    const cities = new Set(props.map(p => p.location)).size;
-    document.getElementById("stat-cities").textContent = cities;
-    const latest = props.length ? props[props.length - 1].title : "—";
-    document.getElementById("stat-latest").textContent = latest.length > 10 ? latest.slice(0, 10) + "…" : latest;
-  }
-
-  function showToast(msg, isError = false) {
-    const toast = document.getElementById("toast");
-    document.getElementById("toast-msg").textContent = msg;
-    toast.style.background = isError ? "hsl(0, 65%, 50%)" : "var(--first-color)";
-    toast.classList.add("show");
-    setTimeout(() => toast.classList.remove("show"), 2800);
   }
 
   function addProperty() {
@@ -411,17 +480,16 @@
 
   function deleteProperty(id, name) {
     if (!confirm('Remove "' + name + '"?')) return;
-    let properties = getProperties().filter(p => p.id !== id);
+    const properties = getProperties().filter(p => p.id !== id);
     saveProperties(properties);
     renderAdmin();
     showToast('"' + name + '" removed.');
   }
 
-  function renderAdmin() {
+  function renderProperties() {
     const properties = getProperties();
     const listDiv = document.getElementById("admin-list");
     listDiv.innerHTML = "";
-    updateStats();
 
     if (properties.length === 0) {
       listDiv.innerHTML = '<div class="empty-state"><i class="bx bx-building"></i><p>No properties yet.<br>Add your first one!</p></div>';
@@ -431,48 +499,143 @@
     [...properties].reverse().forEach(p => {
       const safeName = p.title.replace(/'/g, "\\'");
       const thumb = p.image
-        ? '<img class="prop-thumb" src="' + p.image + '" alt="' + p.title + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">' +
-          '<div class="prop-thumb-placeholder" style="display:none"><i class=\'bx bx-image\'></i></div>'
-        : '<div class="prop-thumb-placeholder"><i class="bx bx-image"></i></div>';
+        ? `<img class="prop-thumb" src="${p.image}" alt="${p.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+           <div class="prop-thumb-placeholder" style="display:none"><i class='bx bx-image'></i></div>`
+        : `<div class="prop-thumb-placeholder"><i class="bx bx-image"></i></div>`;
 
       listDiv.innerHTML +=
-        '<div class="prop-item">' +
-          thumb +
-          '<div class="prop-info">' +
-            '<div class="prop-title">' + p.title + '</div>' +
-            '<div class="prop-meta"><span><i class="bx bx-map-pin"></i>' + p.location + '</span></div>' +
-          '</div>' +
-          '<div class="prop-price">' + p.price + '</div>' +
-          '<button class="btn-delete" onclick="deleteProperty(' + p.id + ', \'' + safeName + '\')">' +
-            '<i class="bx bx-trash"></i>' +
-          '</button>' +
-        '</div>';
+        `<div class="prop-item">
+          ${thumb}
+          <div class="prop-info">
+            <div class="prop-title">${p.title}</div>
+            <div class="prop-meta"><span><i class="bx bx-map-pin"></i>${p.location}</span></div>
+          </div>
+          <div class="prop-price">${p.price}</div>
+          <button class="btn-delete" onclick="deleteProperty(${p.id}, '${safeName}')">
+            <i class="bx bx-trash"></i>
+          </button>
+        </div>`;
     });
   }
+
+  // ── ENQUIRIES ─────────────────────────────────────────────
+
+  // Collect all enquiries from every user's localStorage key
+  function getAllEnquiries() {
+    const all = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('enquiries_')) {
+        const userEmail = key.replace('enquiries_', '');
+        const items = JSON.parse(localStorage.getItem(key)) || [];
+        items.forEach((e, index) => {
+          all.push({ ...e, userEmail, originalIndex: index });
+        });
+      }
+    }
+    return all;
+  }
+
+  function updateEnquiryStatus(userEmail, index, newStatus) {
+    const key   = 'enquiries_' + userEmail;
+    const items = JSON.parse(localStorage.getItem(key)) || [];
+    if (items[index]) {
+      items[index].status = newStatus;
+      localStorage.setItem(key, JSON.stringify(items));
+      renderEnquiries();
+      updateStats();
+      showToast('Marked as ' + newStatus + '.');
+    }
+  }
+
+  function renderEnquiries() {
+    const list = document.getElementById('enquiries-admin-list');
+    const all  = getAllEnquiries();
+
+    if (all.length === 0) {
+      list.innerHTML = '<div class="empty-state"><i class="bx bx-calendar"></i><p>No viewing requests yet.</p></div>';
+      return;
+    }
+
+    list.innerHTML = all.map(e => {
+      const isPending   = !e.status || e.status === 'pending';
+      const badgeClass  = isPending ? 'badge-pending' : 'badge-confirmed';
+      const badgeLabel  = isPending ? 'Pending' : 'Confirmed';
+      const actionBtn   = isPending
+        ? `<button class="btn-confirm" onclick="updateEnquiryStatus('${e.userEmail}', ${e.originalIndex}, 'confirmed')"><i class='bx bx-check'></i> Confirm</button>`
+        : `<button class="btn-undo"    onclick="updateEnquiryStatus('${e.userEmail}', ${e.originalIndex}, 'pending')">Undo</button>`;
+
+      return `
+        <div class="enquiry-item">
+          <div class="prop-info">
+            <div class="prop-title">${e.property}</div>
+            <div class="prop-meta">
+              <span><i class='bx bx-user'></i> ${e.userEmail}</span>
+              <span><i class='bx bx-calendar'></i> ${e.date || 'TBC'}</span>
+            </div>
+            ${e.message ? `<div style="font-size:var(--smaller-font-size);color:var(--text-color);margin-top:.35rem;">${e.message}</div>` : ''}
+          </div>
+          <div class="enquiry-actions">
+            <span class="badge ${badgeClass}">${badgeLabel}</span>
+            ${actionBtn}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── STATS ─────────────────────────────────────────────────
+
+  function updateStats() {
+    const props = getProperties();
+    document.getElementById("stat-total").textContent = props.length;
+    document.getElementById("stat-cities").textContent = new Set(props.map(p => p.location)).size;
+    const latest = props.length ? props[props.length - 1].title : "—";
+    document.getElementById("stat-latest").textContent = latest.length > 10 ? latest.slice(0, 10) + "…" : latest;
+    document.getElementById("stat-enquiries").textContent = getAllEnquiries().length;
+  }
+
+  // ── TOAST ─────────────────────────────────────────────────
+
+  function showToast(msg, isError = false) {
+    const toast = document.getElementById("toast");
+    document.getElementById("toast-msg").textContent = msg;
+    toast.style.background = isError ? "hsl(0, 65%, 50%)" : "var(--first-color)";
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2800);
+  }
+
+  // ── RENDER ALL ────────────────────────────────────────────
+
+  function renderAdmin() {
+    updateStats();
+    renderProperties();
+    renderEnquiries();
+  }
+
+  // ── ENTER KEY ON FORM ─────────────────────────────────────
 
   document.querySelectorAll(".form-input").forEach(input => {
     input.addEventListener("keydown", e => { if (e.key === "Enter") addProperty(); });
   });
 
-  /* DARK / LIGHT THEME — synced with main site */
-  const themeButton = document.getElementById("theme-button");
-  const darkTheme   = "dark-theme";
+  // ── THEME ─────────────────────────────────────────────────
 
-  const savedTheme = localStorage.getItem("selected-theme");
-  if (savedTheme === "dark") {
-    document.body.classList.add(darkTheme);
+  const themeButton = document.getElementById("theme-button");
+  if (localStorage.getItem("selected-theme") === "dark") {
+    document.body.classList.add("dark-theme");
     themeButton.querySelector("i").className = "bx bx-sun";
   }
-
   themeButton.addEventListener("click", () => {
-    document.body.classList.toggle(darkTheme);
-    const isDark = document.body.classList.contains(darkTheme);
+    document.body.classList.toggle("dark-theme");
+    const isDark = document.body.classList.contains("dark-theme");
     themeButton.querySelector("i").className = isDark ? "bx bx-sun" : "bx bx-moon";
     localStorage.setItem("selected-theme", isDark ? "dark" : "light");
-    localStorage.setItem("selected-icon",  isDark ? "bx bx-moon" : "bx bx-sun");
   });
 
+  // ── INIT ──────────────────────────────────────────────────
+
   renderAdmin();
+
 </script>
 
 </body>

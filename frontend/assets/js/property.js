@@ -1,7 +1,7 @@
 const properties = [
     {
         id: 1,
-        title: "Bungalow 1",
+        title: "Koregaon Park Bungalow",
         price: "₹1.8 Cr",
         image: "assets/img/popular1.jpg",
         location: "Pune",
@@ -9,7 +9,7 @@ const properties = [
     },
     {
         id: 2,
-        title: "Bungalow 2",
+        title: "Pedar Road Cottage",
         price: "₹2.4 Cr",
         image: "assets/img/popular2.jpg",
         location: "Mumbai",
@@ -17,7 +17,7 @@ const properties = [
     },
     {
         id: 3,
-        title: "Bungalow 3",
+        title: "Colva Holiday Home",
         price: "₹1.2 Cr",
         image: "assets/img/popular3.jpg",
         location: "Goa",
