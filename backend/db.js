@@ -5,6 +5,7 @@ const pool = mysql.createPool({
   user:     process.env.DB_USER     || 'root',
   password: process.env.DB_PASSWORD || 'golden',
   database: process.env.DB_NAME     || 'jmra_db',
+  port:     process.env.DB_PORT || 3306,
   waitForConnections: true,
   connectionLimit:    10,
 });
